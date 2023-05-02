@@ -3,103 +3,104 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import java.util.ArrayList;
 
 public class TicTacToe implements ActionListener{
 
     Random random = new Random();
     JFrame frame = new JFrame();
-    JPanel title_panel = new JPanel();
-    JPanel button_panel = new JPanel();
-    JLabel textfield = new JLabel();
-    JButton[] buttons = new JButton[9];
+    JPanel ueberschrift_feld = new JPanel();
+    JPanel spielfeld = new JPanel();
+    JLabel textfeld = new JLabel();
+    JButton[] felder = new JButton[9];
 
-    JPanel rpanel = new JPanel();
-    JButton resButton = new JButton();
+    JPanel reset_feld = new JPanel();
+    JButton reset_button = new JButton();
 
-    boolean player1_turn;
+    boolean zugSpieler_X;
 
     int[][] gewinnKombinationen = {{0,1,2}, {3,4,5}, {6,7,8}, {0,3,6}, {1,4,7}, {2,5,8}, {0,4,8}, {2,4,6}};
     ArrayList<Integer> xListe = new ArrayList<Integer>();
     ArrayList<Integer> yListe = new ArrayList<Integer>();
-    int winComb;
+    int gewinnKombination;
 
     TicTacToe(){
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                   //Grafisches Spielfeld ?!
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);                   
         frame.setSize(800,800);
         frame.getContentPane().setBackground(new Color(50,50,50));
         frame.setLayout(new BorderLayout());
         frame.setVisible(true);
 
-        textfield.setBackground(new Color(25,25,25));
-        textfield.setForeground(new Color(25,255,0));
-        textfield.setFont(new Font("Ink Free", Font.BOLD,75));
-        textfield.setHorizontalAlignment(JLabel.CENTER);
-        textfield.setText("Tic-Tac-Toe");
-        textfield.setOpaque(true);
+        textfeld.setBackground(new Color(250,250,115));
+        textfeld.setForeground(new Color(45,45,45));
+        textfeld.setFont(new Font("Rockwell Condensed", Font.BOLD,75));
+        textfeld.setHorizontalAlignment(JLabel.CENTER);
+        textfeld.setText("Tic-Tac-Toe");
+        textfeld.setOpaque(true);
 
-        title_panel.setLayout(new BorderLayout());
-        title_panel.setBounds(0,0,800,100);
+        ueberschrift_feld.setLayout(new BorderLayout());
+        ueberschrift_feld.setBounds(0,0,800,100);
 
-        button_panel.setLayout(new GridLayout(3,3));            //erstellt Bereich, in dem die Buttons sind
-        button_panel.setBackground(new Color(150,150,150));         //
+        spielfeld.setLayout(new GridLayout(3,3));            //erstellt Bereich, in dem die Buttons sind
+        spielfeld.setBackground(new Color(10,10,10));         
 
         for(int i = 0; i<9; i++){
-            buttons[i] = new JButton();
-            button_panel.add(buttons[i]);
-            buttons[i].setFont(new Font("MV Boli", Font.BOLD, 120));
-            buttons[i].setFocusable(false);
-            buttons[i].addActionListener(this);
+            felder[i] = new JButton();
+            spielfeld.add(felder[i]);
+            felder[i].setBackground(new Color(225,225,225));
+            felder[i].setFont(new Font("Algerian", Font.BOLD, 120));
+            felder[i].setFocusable(false);
+            felder[i].addActionListener(this);
 
         }
 
-        rpanel.setLayout(new BorderLayout());
-        resButton.setText("Reset");
-        resButton.setSize(100,50);
-        resButton.addActionListener(this);
+        reset_feld.setLayout(new BorderLayout());
+        reset_button.setText("Reset");
+        reset_button.setSize(100,50);
+        reset_button.addActionListener(this);
+        reset_button.setBackground(new Color(180,180,180));
 
-        title_panel.add(textfield);
-        rpanel.add(resButton);                         
-        frame.add(title_panel, BorderLayout.NORTH);
-        frame.add(button_panel, BorderLayout.CENTER);
-        frame.add(rpanel, BorderLayout.SOUTH);
+        ueberschrift_feld.add(textfeld);
+        reset_feld.add(reset_button);                         
+        frame.add(ueberschrift_feld, BorderLayout.NORTH);
+        frame.add(spielfeld, BorderLayout.CENTER);
+        frame.add(reset_feld, BorderLayout.SOUTH);
         frame.setLocationRelativeTo(null);
 
 
-        firstTurn(3000);
+        ersterZug(3000);
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent action) {
         
         for(int i=0; i<9; i++){
-            if(e.getSource()==buttons[i]){
-                if(player1_turn){
-                    if(buttons[i].getText()==""){
-                        buttons[i].setForeground(new Color(255,0,0));
-                        buttons[i].setText("X");
-                        player1_turn = false;
-                        textfield.setText("O ist dran");
+            if(action.getSource()==felder[i]){
+                if(zugSpieler_X){
+                    if(felder[i].getText()==""){
+                        felder[i].setForeground(new Color(255,0,0));
+                        felder[i].setText("X");
+                        zugSpieler_X = false;
+                        textfeld.setText("O ist dran");
                         xListe.add(i);
 
                         // Schauen ob X gewinnt:
                         if(checkResult(xListe)){
-                            textfield.setText("X gewinnt!");
+                            textfeld.setText("X gewinnt!");
                             disableButtons();
-                            for(int x : gewinnKombinationen[winComb]){
-                                buttons[x].setBackground(Color.cyan);
+                            for(int x : gewinnKombinationen[gewinnKombination]){
+                                felder[x].setBackground(Color.cyan);
                             }
                         }
                         else{
-                                            // Schauen ob unentschieden:
+                        // Schauen ob unentschieden:
                             for(int x = 0; x < 9; x++){
-                                if(buttons[x].getText().isBlank()){
+                                if(felder[x].getText().isBlank()){
                                     break;
                                 }
     
                                 if(x==8){
                                     disableButtons();
-                                    textfield.setText("Unentschieden!");
+                                    textfeld.setText("Unentschieden!");
                                 }   
                             }
 
@@ -107,30 +108,30 @@ public class TicTacToe implements ActionListener{
                     }
                 }
                 else{
-                    if(buttons[i].getText()==""){
-                        buttons[i].setForeground(new Color(0,0,255));
-                        buttons[i].setText("O");
-                        player1_turn = true;
-                        textfield.setText("X ist an der Reihe");
+                    if(felder[i].getText()==""){
+                        felder[i].setForeground(new Color(0,0,255));
+                        felder[i].setText("O");
+                        zugSpieler_X = true;
+                        textfeld.setText("X ist an der Reihe");
                         yListe.add(i);
                         // Schauen ob O gewinnt:
                         if(checkResult(yListe)){
-                            textfield.setText("O gewinnt!");
+                            textfeld.setText("O gewinnt!");
                             disableButtons();
-                            for(int x : gewinnKombinationen[winComb]){
-                                buttons[x].setBackground(Color.cyan);
+                            for(int x : gewinnKombinationen[gewinnKombination]){
+                                felder[x].setBackground(Color.cyan);
                             }
                         }
                         else{
-                            // Schauen ob unentschieden:
+                        // Schauen ob unentschieden:
                             for(int x = 0; x < 9; x++){
-                                if(buttons[x].getText().isBlank()){
+                                if(felder[x].getText().isBlank()){
                                     break;
                                 }
 
                                 if(x==8){
                                     disableButtons();
-                                    textfield.setText("Unentschieden!");
+                                    textfeld.setText("Unentschieden!");
                                 }   
                             }
                         }
@@ -140,32 +141,32 @@ public class TicTacToe implements ActionListener{
             }
 
         }
-        if(e.getSource() == resButton){
+        if(action.getSource() == reset_button){
             reset();
         }
     }
     
-    public void firstTurn(int sleepTime){
+    public void ersterZug(int sleepTime){
         //Entscheiden, wer anfängt
 
         disableButtons();
-        resButton.setEnabled(false);
+        reset_button.setEnabled(false);
         try{
             Thread.sleep(sleepTime);
         }
-        catch (InterruptedException e){
-            e.printStackTrace();
+        catch (InterruptedException action){
+            action.printStackTrace();
         }
         enableButtons();
-        resButton.setEnabled(true);
+        reset_button.setEnabled(true);
 
         if(random.nextInt(2)==0){
-            player1_turn = true;
-            textfield.setText("X ist an der Reihe");
+            zugSpieler_X = true;
+            textfeld.setText("X ist an der Reihe");
         }
         else{
-            player1_turn = false;
-            textfield.setText("O ist dran");
+            zugSpieler_X = false;
+            textfeld.setText("O ist dran");
         }
     }
 
@@ -179,7 +180,7 @@ public class TicTacToe implements ActionListener{
                 if(arrayList.contains(gewinnKombinationen[x][y])){
                     if(y == 2){
                         win = true;
-                        winComb = x;
+                        gewinnKombination = x;
                         x = 7;
                     }
                 }
@@ -194,36 +195,36 @@ public class TicTacToe implements ActionListener{
 
     private void disableButtons() {
         for(int i = 0; i < 9; i++){
-            buttons[i].setEnabled(false);
+            felder[i].setEnabled(false);
             }
         }
 
     private void enableButtons() {
             for(int i = 0; i < 9; i++){
-            buttons[i].setEnabled(true);
+            felder[i].setEnabled(true);
             }
         }
 
     public void reset(){
-        frame.remove(button_panel);
-        button_panel = new JPanel();
-        button_panel.setLayout(new BorderLayout());
-        button_panel.setLayout(new GridLayout(3,3));
-        button_panel.setBackground(new Color(150,150,150));
-        frame.add(button_panel, BorderLayout.CENTER);
+        frame.remove(spielfeld);
+        spielfeld = new JPanel();
+        spielfeld.setLayout(new BorderLayout());
+        spielfeld.setLayout(new GridLayout(3,3));
+        spielfeld.setBackground(new Color(50,50,50));
+        frame.add(spielfeld, BorderLayout.CENTER);
 
         for(int i = 0; i < 9; i++){
-            buttons[i] = new JButton();
-            button_panel.add(buttons[i]);
-            buttons[i].setFont(new Font("MV Boli", Font.BOLD, 120));
-            buttons[i].setFocusable(false);
-            buttons[i].addActionListener(this);
+            felder[i] = new JButton();
+            spielfeld.add(felder[i]);
+            felder[i].setFont(new Font("Algerian", Font.BOLD, 120));
+            felder[i].setFocusable(false);
+            felder[i].addActionListener(this);
         }
         xListe.clear();
         yListe.clear();
 
-        textfield.setText("Tic-Tac-Toe");
-        firstTurn(500);
+        textfeld.setText("Tic-Tac-Toe");
+        ersterZug(500);
         SwingUtilities.updateComponentTreeUI(frame);
     }
 }
